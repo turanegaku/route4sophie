@@ -47,18 +47,20 @@ if __name__ == '__main__':
             continue
         for item in alchemy.get(p[0], []):
             pp = list(p)
+            pp[0] = "%s %s" % (pp[0], pp[0])
             pp.insert(0, item)
-            if pp not in G:
-                G.append(pp)
+            if item not in G:
+                G.append(item)
                 que.put(pp)
         for ctgr in category.get(p[0], []):
             for item in alchemy.get(ctgr, []):
                 pp = list(p)
+                pp[0] = "%s %s" % (pp[0], ctgr)
                 pp.insert(0, item)
-                if pp not in G:
-                    G.append(pp)
+                if item not in G:
+                    G.append(item)
                     que.put(pp)
     if len(res) == 0:
         print "結果を見つけることが出来ませんでした."
-    for v in res:
+    for v in reversed(res):
         print v
