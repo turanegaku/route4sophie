@@ -19,13 +19,13 @@ if __name__ == '__main__':
         group = data[1]
 
         for i in xrange(4):
-            if data[i*2+2] != '':
+            if data[i * 2 + 2] != '':
                 category[name] = category.get(name, [])
-                category[name].append(data[i*2+2])
+                category[name].append(data[i * 2 + 2])
         for i in xrange(4):
-            if data[i*2+10] != '':
-                alchemy[data[i*2+10]] = alchemy.get(data[i*2+10], [])
-                alchemy.get(data[i*2+10], []).append(name)
+            if data[i * 2 + 10] != '':
+                alchemy[data[i * 2 + 10]] = alchemy.get(data[i * 2 + 10], [])
+                alchemy.get(data[i * 2 + 10], []).append(name)
     # print category
     if argv[1] not in category:
         print "%s は未登録の物質です" % argv[1]
