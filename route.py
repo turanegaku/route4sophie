@@ -9,7 +9,10 @@ if __name__ == '__main__':
     if len(argv) != 3:
         print "Usage: $ python %s from to" % argv[0]
         quit()
+    start = argv[1]
+    goal = argv[2]
     category = {}
+    categories = set()
     alchemy = {}
 
     reader = csv.reader(open('./acquaintance.csv'))
@@ -18,24 +21,23 @@ if __name__ == '__main__':
         name = data[0]
         group = data[1]
 
-        for i in xrange(4):
-            if data[i * 2 + 2] != '':
-                category[name] = category.get(name, [])
-                category[name].append(data[i * 2 + 2])
-        for i in xrange(4):
-            if data[i * 2 + 10] != '':
-                alchemy[data[i * 2 + 10]] = alchemy.get(data[i * 2 + 10], [])
-                alchemy.get(data[i * 2 + 10], []).append(name)
+        for item in [x for x in data[2:10:2] if x]:
+            category[name] = category.get(name, [])
+            category[name].append(item)
+            categories.add(item)
+        for item in [x for x in data[10:18:2] if x]:
+            alchemy[item] = alchemy.get(item, [])
+            alchemy.get(item, []).append(name)
     # print category
-    if argv[1] not in category:
-        print "%s は未登録の物質です" % argv[1]
+    if start not in category:
+        print "%s は未登録の物質です" % start
         quit()
-    if argv[2] not in category:
-        print "%s は未登録の物質です" % argv[2]
+    if goal not in category and goal not in categories:
+        print "%s は未登録の物質です" % goal
         quit()
 
     que = Queue.Queue()
-    que.put([argv[1]])
+    que.put([start])
     while True:
         minv = 100
         while not que.empty():
@@ -43,7 +45,7 @@ if __name__ == '__main__':
             if len(p) > minv:
                 que.put(p)
                 break
-            if p[0] == argv[2]:
+            if goal in p or goal in category.get(p[0], []):
                 minv = min(minv, len(p))
                 print ' '.join(reversed(p))
             for item in alchemy.get(p[0], []):
