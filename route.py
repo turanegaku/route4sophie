@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
 import Queue
@@ -13,7 +13,7 @@ if __name__ == '__main__':
     alchemy = {}
 
     reader = csv.reader(open('./acquaintance.csv'))
-    for data in reader:
+    for data in list(reader)[1:]:
         # print ', '.join(data)
         name = data[0]
         group = data[1]
@@ -34,33 +34,26 @@ if __name__ == '__main__':
         print "%s は未登録の物質です" % argv[2]
         quit()
 
-    G = []
     que = Queue.Queue()
     que.put([argv[1]])
-    res = []
+    minv = 10
     while not que.empty():
         p = que.get()
         if p[0] == argv[2]:
-            res = p
-            break
-        if len(p) > 7:
+            minv = len(p)/2
+            print ' '.join(reversed(p))
+        if len(p) > minv:
             continue
         for item in alchemy.get(p[0], []):
             pp = list(p)
-            pp[0] = "%s %s" % (pp[0], pp[0])
+            pp.insert(0, "\033[94m"+pp[0]+"\033[0m")
             pp.insert(0, item)
-            if item not in G:
-                G.append(item)
-                que.put(pp)
+            que.put(pp)
         for ctgr in category.get(p[0], []):
             for item in alchemy.get(ctgr, []):
                 pp = list(p)
-                pp[0] = "%s %s" % (pp[0], ctgr)
+                pp.insert(0, "\033[94m"+ctgr+"\033[0m")
                 pp.insert(0, item)
-                if item not in G:
-                    G.append(item)
-                    que.put(pp)
-    if len(res) == 0:
+                que.put(pp)
+    if minv == 10:
         print "結果を見つけることが出来ませんでした."
-    for v in reversed(res):
-        print v
