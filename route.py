@@ -36,24 +36,38 @@ if __name__ == '__main__':
 
     que = Queue.Queue()
     que.put([argv[1]])
-    minv = 10
-    while not que.empty():
-        p = que.get()
-        if p[0] == argv[2]:
-            minv = len(p)/2
-            print ' '.join(reversed(p))
-        if len(p) > minv:
-            continue
-        for item in alchemy.get(p[0], []):
-            pp = list(p)
-            pp.insert(0, "\033[94m"+pp[0]+"\033[0m")
-            pp.insert(0, item)
-            que.put(pp)
-        for ctgr in category.get(p[0], []):
-            for item in alchemy.get(ctgr, []):
+    while True:
+        minv = 100
+        while not que.empty():
+            p = que.get()
+            if len(p) > minv:
+                que.put(p)
+                break
+            if p[0] == argv[2]:
+                minv = min(minv, len(p))
+                print ' '.join(reversed(p))
+            for item in alchemy.get(p[0], []):
+                if item in p:
+                    continue
                 pp = list(p)
-                pp.insert(0, "\033[94m"+ctgr+"\033[0m")
+                pp.insert(0, "\033[94m" + pp[0] + "\033[0m")
                 pp.insert(0, item)
                 que.put(pp)
-    if minv == 10:
-        print "結果を見つけることが出来ませんでした."
+            for ctgr in category.get(p[0], []):
+                for item in alchemy.get(ctgr, []):
+                    if item in p:
+                        continue
+                    pp = list(p)
+                    pp.insert(0, "\033[94m" + ctgr + "\033[0m")
+                    pp.insert(0, item)
+                    que.put(pp)
+        if minv == 100:
+            print "結果を見つけることが出来ませんでした."
+            break
+        else:
+            print 'show more? [y/n]:',
+            try:
+                if raw_input() != 'y':
+                    break
+            except KeyboardInterrupt:
+                break
